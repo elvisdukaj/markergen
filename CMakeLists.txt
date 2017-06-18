@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set (CMAKE_CXX_STANDARD 14)
-project(genmarker LANGUAGES CXX)
+project(markergen LANGUAGES CXX)
 
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED)

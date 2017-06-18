@@ -11,7 +11,6 @@ Mat addOrientation(cv::Mat& image, const Size &blockSize);
 void encodeLine(cv::Mat& dataImageLine, const cv::Size& blockSize, int bitCount, uint64_t bits);
 void encode(cv::Mat& image, uint64_t id, const Size &blockSize);
 
-
 int main()
 {
     uint64_t id = 1;
@@ -25,16 +24,16 @@ int main()
     Size blockSize{blockWidth, blockWidth};
     Size imageSize = blockSize * 12;
 
-    Mat image{imageSize, CV_8UC3, Scalar{0.0}};
+    Mat image{imageSize, CV_8UC1, Scalar{0.0}};
 
     auto border = addBorder(image, blockSize);
     auto data = addOrientation(border, blockSize);
     encode(data, id, blockSize);
 
-    cv::imshow("marker", image);
+    cv::imshow("Marker", image);
     cv::waitKey(0);
 
-    imwrite("marker.bmp", image);
+    imwrite(to_string(id) + string{".bmp"}, image);
 
     return 0;
 }
@@ -89,7 +88,6 @@ void encode(cv::Mat& image, uint64_t id, const cv::Size& blockSize)
                     );
 
         auto bits = (id & (bitmask << i*bitCount)) >> i*bitCount;
-        cout << "line bits: " << bits << endl;
         encodeLine(dataImageLine, blockSize, bitCount, bits);
     }
 
@@ -101,7 +99,7 @@ void encode(cv::Mat& image, uint64_t id, const cv::Size& blockSize)
     auto crc1 = checksum & 0xFF;
     auto crc2 = checksum >> 8;
 
-    cout << hex << "checksum is: " << checksum << "(" << crc1 << " - " << crc2 << ")" << dec << endl;
+    cout << hex << "checksum is: " << checksum << "( " << crc1 << " - " << crc2 << " )" << dec << endl;
 
     auto crc1LineImage = image(
                 Rect{
