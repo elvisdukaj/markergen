@@ -6,7 +6,7 @@
 using namespace std;
 using namespace cv;
 
-Mat addBorder(cv::Mat& image, const cv::Size& blockSize);
+Mat addFrame(cv::Mat& image, const cv::Size& blockSize);
 Mat addOrientation(cv::Mat& image, const Size &blockSize);
 void encodeLine(cv::Mat& dataImageLine, const cv::Size& blockSize, int bitCount, uint64_t bits);
 void encode(cv::Mat& image, uint64_t id, const Size &blockSize);
@@ -26,7 +26,7 @@ int main()
 
     Mat image{imageSize, CV_8UC1, Scalar{0.0}};
 
-    auto border = addBorder(image, blockSize);
+    auto border = addFrame(image, blockSize);
     auto data = addOrientation(border, blockSize);
     encode(data, id, blockSize);
 
@@ -38,7 +38,7 @@ int main()
     return 0;
 }
 
-cv::Mat addBorder(cv::Mat& image, const cv::Size& blockSize)
+cv::Mat addFrame(cv::Mat& image, const cv::Size& blockSize)
 {
     Mat vline{Size{image.cols, blockSize.height}, image.type(), cv::Scalar{0}};
     vline.copyTo(image(Rect{0,0, image.cols, blockSize.height}));
