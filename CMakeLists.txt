@@ -6,8 +6,6 @@ project(markergen LANGUAGES CXX)
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED)
 
-message("Boost_INCLUDE_DIR is ${Boost_INCLUDE_DIR}")
-
 include_directories(include)
 include_directories(${Boost_INCLUDE_DIRS})
 
