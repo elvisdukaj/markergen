@@ -13,28 +13,34 @@ void encode(cv::Mat& image, uint64_t id, const Size &blockSize);
 
 int main()
 {
-    uint64_t id = 1;
-    cout << "Inserire l'ID: ";
-    cin >> id;
-
     int blockWidth;
     cout << "Iserire la larghezza del blocco: ";
     cin >> blockWidth;
 
-    Size blockSize{blockWidth, blockWidth};
-    Size imageSize = blockSize * 12;
+    while(true)
+    {
+        uint64_t id = 1;
+        cout << "Inserire l'ID: ";
+        cin >> id;
 
-    Mat image{imageSize, CV_8UC1, Scalar{0.0}};
 
-    auto border = addFrame(image, blockSize);
-    auto data = addOrientation(border, blockSize);
-    encode(data, id, blockSize);
+        Size blockSize{blockWidth, blockWidth};
+        Size imageSize = blockSize * 12;
 
-    cv::imshow("Marker", image);
-    cv::waitKey(0);
+        Mat image{imageSize, CV_8UC1, Scalar{0.0}};
 
-    imwrite(to_string(id) + string{".bmp"}, image);
+        auto border = addFrame(image, blockSize);
+        auto data = addOrientation(border, blockSize);
+        encode(data, id, blockSize);
 
+        cv::imshow("Marker", image);
+        cv::waitKey(0);
+
+        imwrite(to_string(id) + string{".bmp"}, image);
+
+        if (id == 0)
+            break;
+    }
     return 0;
 }
 
