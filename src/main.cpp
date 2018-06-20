@@ -1,7 +1,7 @@
-#define _CRT_SECURE_NO_DEPRECATE
-#include <iostream>
+#include "options.hpp"
 #include <boost/crc.hpp>
 #include <opencv2/opencv.hpp>
+#include <iostream>
 
 using namespace std;
 using namespace cv;
@@ -11,37 +11,30 @@ Mat addOrientation(cv::Mat& image, const Size &blockSize);
 void encodeLine(cv::Mat& dataImageLine, const cv::Size& blockSize, int bitCount, uint64_t bits);
 void encode(cv::Mat& image, uint64_t id, const Size &blockSize);
 
-int main()
+int main(int argc, char* argv[])
 {
-    int blockWidth;
-    cout << "Iserire la larghezza del blocco: ";
-    cin >> blockWidth;
+    Options opt{argc, argv};
 
-    while(true)
+    if (opt.showOnlyHelp())
     {
-        uint64_t id = 1;
-        cout << "Inserire l'ID: ";
-        cin >> id;
-
-
-        Size blockSize{blockWidth, blockWidth};
-        Size imageSize = blockSize * 12;
-
-        Mat image{imageSize, CV_8UC1, Scalar{0.0}};
-
-        auto border = addFrame(image, blockSize);
-        auto data = addOrientation(border, blockSize);
-        encode(data, id, blockSize);
-
-        cv::imshow("Marker", image);
-        cv::waitKey(0);
-
-        imwrite(to_string(id) + string{".bmp"}, image);
-
-        if (id == 0)
-            break;
+        cout << opt << endl;
+        return EXIT_SUCCESS;
     }
-    return 0;
+
+    constexpr auto BLOCK_COUNT = 12;
+    Size blockSize{opt.blockWidth(), opt.blockWidth()};
+    Size imageSize = blockSize * BLOCK_COUNT;
+
+    Mat image{imageSize, CV_8UC1, Scalar{0.0}};
+
+    auto border = addFrame(image, blockSize);
+    auto data = addOrientation(border, blockSize);
+    encode(data, opt.code(), blockSize);
+
+    cv::imshow("Marker", image);
+    cv::waitKey(0);
+
+    imwrite(opt.filename(), image);
 }
 
 cv::Mat addFrame(cv::Mat& image, const cv::Size& blockSize)
@@ -129,7 +122,7 @@ void encodeLine(cv::Mat& dataImageLine, const cv::Size& blockSize, int bitCount,
 {
     for(int j = 0; j < bitCount; ++j)
     {
-        uint64_t mask = (uint64_t)1 << j;
+        uint64_t mask = uint64_t(1) << j;
         uint64_t bit = bits & mask;
 
         auto color = bit == 0 ? Scalar{0} : Scalar{255, 255, 255};
